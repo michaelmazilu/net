@@ -1,13 +1,22 @@
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
+export async function GET(req: Request) {
     try {
-        const { topic } = await req.json();
+        // Get the topic from URL parameters
+        const { searchParams } = new URL(req.url);
+        const topic = searchParams.get("topic");
+
+        if (!topic) {
+            return NextResponse.json(
+                { error: "Topic is required" },
+                { status: 400 }
+            );
+        }
 
         const response = await fetch(
             "https://api.deepseek.com/v1/chat/completions",
             {
-                method: "POST",
+                method: "POST", // DeepSeek API requires POST
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
@@ -18,16 +27,21 @@ export async function POST(req: Request) {
                         {
                             role: "system",
                             content:
-                                "You are an expert in creating learning paths. Generate a network graph of concepts that need to be learned for a given topic. Return the response as a JSON object with nodes and edges.",
+                                "The user will prompt you with a topic they want to learn about. You will then generate units and lessons for that topic. For each unit, you will generate a list of lessons that are related to that unit. Do around 3-5 units and lessons. Generate contect for each lesson not just the title.",
                         },
                         {
                             role: "user",
-                            content: `Create a learning path for: ${topic}`,
+                            content: topic,
                         },
                     ],
+                    stream: false,
                 }),
             }
         );
+
+        if (!response.ok) {
+            throw new Error(`DeepSeek API error: ${response.statusText}`);
+        }
 
         const data = await response.json();
         return NextResponse.json(data);
