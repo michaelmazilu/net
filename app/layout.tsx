@@ -18,15 +18,14 @@ export default function RootLayout({
 }: Readonly<{
     children: React.ReactNode;
 }>) {
-    return (
-        <html lang="en">
-            <body className={`${raleway.className}  antialiased`}>
-                <main className="flex flex-1 items-center min-h-screen">
-                    <Sidebar />
-                    {/* Pass poppins class to Sidebar */}
-                    {children}
-                </main>
-            </body>
-        </html>
-    );
+  return (
+    <html lang="en">
+      <body className={`${raleway.className}  antialiased`}>
+        <main className="flex flex-row items-center min-h-screen">
+          <Sidebar />
+          {children}
+        </main>
+      </body>
+    </html>
+  );
 }

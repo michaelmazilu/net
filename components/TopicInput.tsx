@@ -63,7 +63,7 @@ export function TopicInput() {
 
   return (
     <>
-      <div className="text-3xl font-semibold text-[#FA60D4] pb-16">
+      <div className="text-3xl text-center font-semibold text-[#FA60D4] pb-16">
         What would you like to learn?
       </div>
       <div className="relative w-full">

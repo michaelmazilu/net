@@ -1,6 +1,11 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { supabaseClient } from "@/utils/supabase/client";
+'use client'; 
+
+import React, { useEffect, useState } from 'react';
+import { Button } from "./ui/button";
+import { supabaseClient } from '@/utils/supabase/client';
+import { Auth } from './Auth';
+import { User } from '@supabase/supabase-js';
+
 import { FaTrash } from "react-icons/fa"; // Trash icon
 
 interface Topic {
@@ -13,28 +18,32 @@ export const Sidebar: React.FC = () => {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
 
-  const userEmail = "vmazilu@uwaterloo.ca"; // Hard-coded user email
+  useEffect(() => {
+    supabaseClient.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabaseClient.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   useEffect(() => {
     const fetchTopics = async () => {
+      if (!user) return;
+      
       try {
-        const { data: users, error: userError } = await supabaseClient
-          .from("users")
-          .select("id")
-          .eq("email", userEmail)
-          .single();
-
-        if (userError) {
-          throw userError;
-        }
-
-        const userId = users.id;
-
         const { data: topicsData, error: topicsError } = await supabaseClient
-          .from("topics")
-          .select("*")
-          .eq("user_id", userId);
+          .from('topics')
+          .select('*')
+          .eq('user_id', user.id);
 
         if (topicsError) {
           throw topicsError;
@@ -48,15 +57,36 @@ export const Sidebar: React.FC = () => {
       }
     };
 
-    fetchTopics();
-  }, []);
+    if (user) {
+      fetchTopics();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
+
+  const handleSignOut = async () => {
+    await supabaseClient.auth.signOut();
+  };
+
+  if (!user) {
+    return (
+      <div className="w-64 h-screen bg-[#262626] text-white flex flex-col items-start p-4 shadow-md font-poppins">
+        <div className="w-full flex justify-center mb-6">
+          <img
+            src="/logonet.png"
+            alt="Net Lessons Logo"
+            className="w-auto h-auto"
+          />
+        </div>
+        <Auth />
+      </div>
+    );
+  }
 
   const handleDelete = async (id: string) => {
     try {
-      // Step 1: Remove the topic from the state (UI)
       setTopics((prevTopics) => prevTopics.filter((topic) => topic.id !== id));
 
-      // Step 2: Delete the topic from the database
       const { error } = await supabaseClient
         .from("topics")
         .delete()
@@ -66,7 +96,6 @@ export const Sidebar: React.FC = () => {
         throw error;
       }
     } catch (err: any) {
-      // Revert state if there's an error deleting from the database
       setTopics((prevTopics) => [
         ...prevTopics,
         { id, title: "", description: "" },
@@ -103,6 +132,12 @@ export const Sidebar: React.FC = () => {
         />
       </div>
 
+      <div className="w-full mb-4">
+        <Button onClick={handleSignOut} variant="ghost" className="w-full">
+          Sign Out
+        </Button>
+      </div>
+
       {topics.map((topic) => (
         <div
           key={topic.id}
@@ -112,9 +147,8 @@ export const Sidebar: React.FC = () => {
             {topic.title}
           </button>
 
-          {/* Trash Icon */}
           <FaTrash
-            onClick={() => handleDelete(topic.id)} // Calls the handleDelete function
+            onClick={() => handleDelete(topic.id)}
             className="text-[#FA60D6] ml-2 cursor-pointer text-sm opacity-0 group-hover:opacity-100 transition-opacity transform hover:animate-shake"
           />
         </div>
