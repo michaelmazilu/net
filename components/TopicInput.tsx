@@ -9,7 +9,8 @@ export function TopicInput() {
 
     const handleSubmit = () => {
         if (inputValue.trim()) {
-            router.push(`?topic=${encodeURIComponent(inputValue)}`);
+            router.push(`/topics/${encodeURIComponent(inputValue)}`);
+            // router.push(`/topics/123`);
         }
     };
 
