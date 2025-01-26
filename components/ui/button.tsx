@@ -1,11 +1,11 @@
-"use client"; // Ensure this is only client-side
+"use client";
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
-import { FaTrash } from "react-icons/fa"; // Trash icon
+import { FaTrash } from "react-icons/fa";
 
 const buttonVariants = cva(
   "inline-flex items-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 font-semibold",
@@ -21,7 +21,7 @@ const buttonVariants = cva(
         secondary:
           "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost:
-          "bg-transparent text-current hover:bg-[#808080] hover:text-white", // Updated hover style
+          "bg-transparent text-current hover:bg-[#808080] hover:text-white",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
@@ -42,8 +42,8 @@ export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
-  icon?: boolean; // Optional icon prop
-  topicID?: string; // Add topicID to Button props
+  icon?: boolean;
+  topicID?: string;
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -54,18 +54,18 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size,
       asChild = false,
       icon = false,
-      topicID, // Destructure topicID from props
+      topicID,
       children,
       ...props
     },
     ref
   ) => {
-    const router = useRouter(); // Initialize the router
+    const router = useRouter();
     const Comp = asChild ? Slot : "button";
 
     const handleRedirect = () => {
       if (topicID) {
-        router.push(`/topics/${topicID}`); // Navigate to the topic page
+        router.push(`/topics/${topicID}`);
       }
     };
 
@@ -73,7 +73,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        onClick={handleRedirect} // Add click handler for redirect
+        onClick={handleRedirect} //redirect
         {...props}
       >
         {children}
