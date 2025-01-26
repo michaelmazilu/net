@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { supabaseClient } from "@/utils/supabase/client";
 import { Auth } from "./Auth";
 import { User } from "@supabase/supabase-js";
+
 import { FaTrash } from "react-icons/fa"; // Trash icon
 
 interface Topic {
@@ -67,6 +68,21 @@ export const Sidebar: React.FC = () => {
     await supabaseClient.auth.signOut();
   };
 
+  if (!user) {
+    return (
+      <div className="w-80 h-screen bg-[#262626] text-white flex flex-col items-start p-4 shadow-md font-poppins">
+        <div className="w-full flex justify-center mb-6">
+          <img
+            src="/logonet.png"
+            alt="Net Lessons Logo"
+            className="w-auto h-auto"
+          />
+        </div>
+        <Auth />
+      </div>
+    );
+  }
+
   const handleDelete = async (id: string) => {
     try {
       setTopics((prevTopics) => prevTopics.filter((topic) => topic.id !== id));
@@ -116,7 +132,7 @@ export const Sidebar: React.FC = () => {
         />
       </div>
 
-      <div className="w-full mb-4">
+      <div className="mb-4">
         <Button onClick={handleSignOut} variant="ghost" className="w-full">
           Sign Out
         </Button>
@@ -125,7 +141,7 @@ export const Sidebar: React.FC = () => {
       {topics.map((topic) => (
         <div
           key={topic.id}
-          className="group relative flex items-center w-full mb-4 whitespace-normal"
+          className="group relative flex items-center w-full mb-4"
         >
           <Button
             className="shadow-none flex-grow text-lg font-medium text-left bg-transparent hover:bg-[#808080] hover:text-white py-2 px-4 rounded-md"
