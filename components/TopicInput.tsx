@@ -22,7 +22,7 @@ export function TopicInput() {
 
     return (
         <>
-            <div className="text-3xl font-semibold text-pink-300 pb-16">
+            <div className="text-3xl font-semibold text-[#FA60D4] pb-16">
                 What would you like to learn?
             </div>
             <Textarea
@@ -30,7 +30,7 @@ export function TopicInput() {
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyPress}
                 placeholder="Type here... (Press Enter to submit)"
-                className="h-14 text-lg bg-[#2a1a29] text-white border-2 border-pink-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 p-3 scrollable"
+                className="h-14 text-lg bg-[#2a1a29] text-white border-2 border-[#FA60D4] rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 p-3 scrollable"
             />
         </>
     );

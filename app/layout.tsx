@@ -22,7 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${raleway.className}  antialiased`}>
         <main className="flex flex-row items-center min-h-screen">
-          <Sidebar poppinsClass={poppins.className} />{" "}
+          <Sidebar />{" "}
           {/* Pass poppins class to Sidebar */}
           {children}
         </main>
