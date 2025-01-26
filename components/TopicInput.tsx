@@ -2,15 +2,46 @@
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { supabaseClient } from "@/utils/supabase/client";
 
 export function TopicInput() {
     const router = useRouter();
     const [inputValue, setInputValue] = useState("");
+    // TODO: Replace with actual auth
+    const userEmail = "vmazilu@uwaterloo.ca";
 
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (inputValue.trim()) {
-            router.push(`/topics/${encodeURIComponent(inputValue)}`);
-            // router.push(`/topics/123`);
+            try {
+                // Get user ID first
+                const { data: user, error: userError } = await supabaseClient
+                    .from("users")
+                    .select("id")
+                    .eq("email", userEmail)
+                    .single();
+
+                if (userError) throw userError;
+
+                // Create new topic with user_id
+                const { data: topic, error: topicError } = await supabaseClient
+                    .from("topics")
+                    .insert([
+                        {
+                            title: inputValue.trim(),
+                            user_id: user.id, // Include the user_id from the users query
+                        },
+                    ])
+                    .select()
+                    .single();
+
+                if (topicError) throw topicError;
+
+                // Navigate to the new topic page
+                router.push(`/topics/${encodeURIComponent(inputValue)}`);
+            } catch (error: any) {
+                console.error("Error creating topic:", error.message);
+                // TODO: Add proper error handling/display
+            }
         }
     };
 
