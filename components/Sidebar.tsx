@@ -1,11 +1,10 @@
-'use client'; 
+"use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { supabaseClient } from '@/utils/supabase/client';
-import { Auth } from './Auth';
-import { User } from '@supabase/supabase-js';
-
+import { supabaseClient } from "@/utils/supabase/client";
+import { Auth } from "./Auth";
+import { User } from "@supabase/supabase-js";
 import { FaTrash } from "react-icons/fa"; // Trash icon
 
 interface Topic {
@@ -38,12 +37,12 @@ export const Sidebar: React.FC = () => {
   useEffect(() => {
     const fetchTopics = async () => {
       if (!user) return;
-      
+
       try {
         const { data: topicsData, error: topicsError } = await supabaseClient
-          .from('topics')
-          .select('*')
-          .eq('user_id', user.id);
+          .from("topics")
+          .select("*")
+          .eq("user_id", user.id);
 
         if (topicsError) {
           throw topicsError;
@@ -68,21 +67,6 @@ export const Sidebar: React.FC = () => {
     await supabaseClient.auth.signOut();
   };
 
-  if (!user) {
-    return (
-      <div className="w-64 h-screen bg-[#262626] text-white flex flex-col items-start p-4 shadow-md font-poppins">
-        <div className="w-full flex justify-center mb-6">
-          <img
-            src="/logonet.png"
-            alt="Net Lessons Logo"
-            className="w-auto h-auto"
-          />
-        </div>
-        <Auth />
-      </div>
-    );
-  }
-
   const handleDelete = async (id: string) => {
     try {
       setTopics((prevTopics) => prevTopics.filter((topic) => topic.id !== id));
@@ -106,7 +90,7 @@ export const Sidebar: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="w-64 h-screen bg-[#262626] text-white flex flex-col items-start p-4 shadow-md font-poppins">
+      <div className="w-80 h-screen bg-[#262626] text-white flex flex-col items-start p-4 shadow-md font-poppins">
         <div className="w-full flex justify-center mb-6">
           <img
             src="/logonet.png"
@@ -123,7 +107,7 @@ export const Sidebar: React.FC = () => {
   }
 
   return (
-    <div className="w-64 h-screen bg-[#262626] text-white flex flex-col items-start p-4 shadow-md font-poppins">
+    <div className="w-80 h-screen bg-[#262626] text-white flex flex-col items-start p-4 shadow-md font-poppins">
       <div className="w-full flex justify-center mb-6">
         <img
           src="/logonet.png"
@@ -141,15 +125,18 @@ export const Sidebar: React.FC = () => {
       {topics.map((topic) => (
         <div
           key={topic.id}
-          className="group relative flex items-center w-full mb-4"
+          className="group relative flex items-center w-full mb-4 whitespace-normal"
         >
-          <button className="flex-grow text-lg font-medium text-left bg-transparent hover:bg-[#808080] hover:text-white py-2 px-4 rounded-md">
+          <Button
+            className="shadow-none flex-grow text-lg font-medium text-left bg-transparent hover:bg-[#808080] hover:text-white py-2 px-4 rounded-md"
+            topicID={topic.id} // Pass the topicID to the Button component
+          >
             {topic.title}
-          </button>
+          </Button>
 
           <FaTrash
             onClick={() => handleDelete(topic.id)}
-            className="text-[#FA60D6] ml-2 cursor-pointer text-sm opacity-0 group-hover:opacity-100 transition-opacity transform hover:animate-shake"
+            className="text-[#FA60D6] ml-2 cursor-pointer text-xl opacity-0 group-hover:opacity-100 transition-opacity transform hover:animate-shake"
           />
         </div>
       ))}

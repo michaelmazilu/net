@@ -1,4 +1,7 @@
+"use client"; // Ensure this is only client-side
+
 import * as React from "react";
+import { useRouter } from "next/navigation";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
@@ -40,6 +43,7 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   icon?: boolean; // Optional icon prop
+  topicID?: string; // Add topicID to Button props
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -50,16 +54,26 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       size,
       asChild = false,
       icon = false,
+      topicID, // Destructure topicID from props
       children,
       ...props
     },
     ref
   ) => {
+    const router = useRouter(); // Initialize the router
     const Comp = asChild ? Slot : "button";
+
+    const handleRedirect = () => {
+      if (topicID) {
+        router.push(`/topics/${topicID}`); // Navigate to the topic page
+      }
+    };
+
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
+        onClick={handleRedirect} // Add click handler for redirect
         {...props}
       >
         {children}
@@ -70,6 +84,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
+
 Button.displayName = "Button";
 
 export { Button, buttonVariants };
