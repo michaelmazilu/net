@@ -1,6 +1,6 @@
-import { dummyData } from "@/app/data/dummyData";
 import React from "react";
 import { Button } from "./ui/button";
+import { dummyData } from "@/app/data/dummyData"; // Import your dummy data
 
 // Add the Poppins class as a prop
 type SidebarProps = {
@@ -19,20 +19,16 @@ export const Sidebar = ({ poppinsClass }: SidebarProps) => {
         />
       </div>
 
-      {/* Display all topics with hover effect */}
-      {/* {dummyData.map((topic) => (
-        <div
-          key={topic.topicId}
-          className="pl-4 hover:bg-[#808080] transition-colors duration-300" // Hover effect with transition
-        >
-          <h3 className={`${poppinsClass} text-md font-medium`}>
+      {/* Generate buttons based on the dummyData */}
+      {dummyData.map(
+        (
+          topic // for loop, which goes through dummy data
+        ) => (
+          <Button key={topic.topicId} className="w-full mb-2" variant="ghost">
             {topic.topicName}
-          </h3>
-        </div>
-      ))} */}
-      <Button className="w-full" variant="ghost">
-        Button
-      </Button>
+          </Button>
+        )
+      )}
     </div>
   );
 };
