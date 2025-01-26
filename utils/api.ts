@@ -1,24 +1,9 @@
-import { NextResponse } from "next/server";
-
-export async function GET(req: Request) {
-export async function GET(req: Request) {
+export async function generateLearningPath(topic: string) {
     try {
-        // Get the topic from URL parameters
-        const { searchParams } = new URL(req.url);
-        const topic = searchParams.get("topic");
-
-        if (!topic) {
-            return NextResponse.json(
-                { error: "Topic is required" },
-                { status: 400 }
-            );
-        }
-
         const response = await fetch(
             "https://api.deepseek.com/v1/chat/completions",
             {
-                method: "POST", // DeepSeek API requires POST
-                method: "POST", // DeepSeek API requires POST
+                method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
@@ -62,7 +47,6 @@ export async function GET(req: Request) {
                         {
                             role: "user",
                             content: topic,
-                            content: topic,
                         },
                     ],
                     stream: false,
@@ -74,13 +58,9 @@ export async function GET(req: Request) {
             throw new Error(`DeepSeek API error: ${response.statusText}`);
         }
 
-        const data = await response.json();
-        return NextResponse.json(data);
+        return await response.json();
     } catch (error) {
         console.error("Error:", error);
-        return NextResponse.json(
-            { error: "Failed to generate learning path" },
-            { status: 500 }
-        );
+        throw new Error("Failed to generate learning path");
     }
 }
