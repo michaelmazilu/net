@@ -8,7 +8,7 @@ body {
 
 @layer base {
   html {
-    color-scheme: light dark;
+    color-scheme: dark;
   }
   :root {
     --background: 0 0% 100%;
