@@ -1,4 +1,5 @@
 "use client";
+
 import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -10,6 +11,8 @@ export function TopicInput() {
   const router = useRouter();
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false); // State for loader
+  const [showGraph, setShowGraph] = useState(false); // State to toggle graph
+  const [submittedTopic, setSubmittedTopic] = useState<string | null>(null); // Store the submitted topic
   const userEmail = "vmazilu@uwaterloo.ca"; // TODO: Replace with actual auth
 
   const handleSubmit = async () => {
@@ -39,11 +42,14 @@ export function TopicInput() {
 
         if (topicError) throw topicError;
 
-        // Navigate to the new topic page
-        router.push(`/topics/${encodeURIComponent(inputValue)}`);
+        // Set the submitted topic and show the graph
+        setSubmittedTopic(inputValue.trim());
+        setShowGraph(true);
       } catch (error: any) {
         console.error("Error creating topic:", error.message);
         // TODO: Add proper error handling/display
+      } finally {
+        setLoading(false); // Stop loader
       }
     }
   };
@@ -81,6 +87,13 @@ export function TopicInput() {
           )}
         </button>
       </div>
+      {showGraph && submittedTopic && (
+        <div className="mt-8">
+          <h1 className="text-2xl font-bold mb-6 text-white">
+            Learning Path: {submittedTopic}
+          </h1>
+        </div>
+      )}
     </>
   );
 }

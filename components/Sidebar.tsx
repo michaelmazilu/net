@@ -1,10 +1,7 @@
 "use client";
-"use client";
-
 import React, { useEffect, useState } from "react";
-
-import { Button } from "./ui/button";
 import { supabaseClient } from "@/utils/supabase/client";
+import { FaTrash } from "react-icons/fa"; // Trash icon
 
 interface Topic {
   id: string;
@@ -17,9 +14,7 @@ export const Sidebar: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // TODO: get user email from supabase with auth...
-  // Hard-coded user email
-  const userEmail = "vmazilu@uwaterloo.ca";
+  const userEmail = "vmazilu@uwaterloo.ca"; // Hard-coded user email
 
   useEffect(() => {
     const fetchTopics = async () => {
@@ -36,7 +31,6 @@ export const Sidebar: React.FC = () => {
 
         const userId = users.id;
 
-        // Step 2: Fetch topics for the retrieved user ID
         const { data: topicsData, error: topicsError } = await supabaseClient
           .from("topics")
           .select("*")
@@ -56,6 +50,30 @@ export const Sidebar: React.FC = () => {
 
     fetchTopics();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      // Step 1: Remove the topic from the state (UI)
+      setTopics((prevTopics) => prevTopics.filter((topic) => topic.id !== id));
+
+      // Step 2: Delete the topic from the database
+      const { error } = await supabaseClient
+        .from("topics")
+        .delete()
+        .eq("id", id);
+
+      if (error) {
+        throw error;
+      }
+    } catch (err: any) {
+      // Revert state if there's an error deleting from the database
+      setTopics((prevTopics) => [
+        ...prevTopics,
+        { id, title: "", description: "" },
+      ]);
+      setError("An error occurred while deleting the topic.");
+    }
+  };
 
   if (loading) {
     return (
@@ -86,13 +104,20 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {topics.map((topic) => (
-        <Button
+        <div
           key={topic.id}
-          className="flex items-center w-full rounded-xl text-lg font-medium my-4"
-          variant="ghost"
+          className="group relative flex items-center w-full mb-4"
         >
-          {topic.title}
-        </Button>
+          <button className="flex-grow text-lg font-medium text-left bg-transparent hover:bg-[#808080] hover:text-white py-2 px-4 rounded-md">
+            {topic.title}
+          </button>
+
+          {/* Trash Icon */}
+          <FaTrash
+            onClick={() => handleDelete(topic.id)} // Calls the handleDelete function
+            className="text-[#FA60D6] ml-2 cursor-pointer text-sm opacity-0 group-hover:opacity-100 transition-opacity transform hover:animate-shake"
+          />
+        </div>
       ))}
     </div>
   );
