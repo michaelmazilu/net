@@ -10,6 +10,7 @@ export default async function TopicPage({
   const topic = decodeURIComponent(awaitFix.topicID);
   const data = await generateLearningPath(topic);
   const content = data.choices[0].message.content;
+  console.log("content", content);
 
   return (
     <main className="flex-1 min-h-screen">
