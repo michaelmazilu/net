@@ -25,7 +25,6 @@ export const Sidebar: React.FC = () => {
       setUser(session?.user ?? null);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange((_event, session) => {
@@ -43,7 +42,8 @@ export const Sidebar: React.FC = () => {
         const { data: topicsData, error: topicsError } = await supabaseClient
           .from("topics")
           .select("*")
-          .eq("user_id", user.id);
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false }); // Sort newest first
 
         if (topicsError) {
           throw topicsError;
@@ -114,13 +114,13 @@ export const Sidebar: React.FC = () => {
             className="w-auto h-auto"
           />
         </div>
-
         <div className="w-full flex justify-center mb-6">
           <p>Loading...</p>
         </div>
       </div>
     );
   }
+
   return (
     <div className="w-72 h-screen bg-[#262626] text-white flex flex-col p-4 shadow-md font-poppins">
       <div className="w-full flex justify-center mb-6">
@@ -131,8 +131,10 @@ export const Sidebar: React.FC = () => {
         />
       </div>
 
-      {/* Other content */}
-      <div className="flex-grow">
+      <div
+        className="flex-grow overflow-y-auto max-h-[calc(100vh-150px)] custom-scrollbar"
+        style={{ direction: "ltr" }}
+      >
         {topics.map((topic) => (
           <div
             key={topic.id}
@@ -153,7 +155,6 @@ export const Sidebar: React.FC = () => {
         ))}
       </div>
 
-      {}
       <div className="w-full mt-4">
         <Button onClick={handleSignOut} variant="ghost" className="w-full">
           Sign Out
