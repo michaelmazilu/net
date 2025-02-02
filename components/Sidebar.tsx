@@ -149,11 +149,8 @@ export const Sidebar: React.FC = () => {
               onClick={() => router.push(`/topics/${topic.id}`)}
               className="shadow-none flex-1 min-w-0 text-lg font-medium text-left bg-transparent hover:bg-transparent hover:text-white py-2 px-4"
             >
-              <div
-                className="overflow-hidden whitespace-nowrap"
-                title={topic.title}
-              >
-                (topic.title)
+              <div className="overflow-hidden whitespace-nowrap">
+                {topic.title}
               </div>
             </Button>
 

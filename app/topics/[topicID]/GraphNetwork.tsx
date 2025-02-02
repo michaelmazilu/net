@@ -7,15 +7,22 @@ import { GraphData } from "@/app/types";
 import { Loader2 } from "lucide-react";
 import { supabaseClient } from "@/utils/supabase/client";
 
-interface ClientPageProps {
+interface GraphNetworkProps {
   topicTitle: string;
   topicId: string;
 }
 
-export default function ClientPage({ topicTitle, topicId }: ClientPageProps) {
+export default function GraphNetwork({
+  topicTitle,
+  topicId,
+}: GraphNetworkProps) {
   const [loading, setLoading] = useState(true);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [graphData, setGraphData] = useState<GraphData | undefined>(undefined);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [scale, setScale] = useState(1);
   const isFirstRender = useRef(true);
 
   const dotSize = 1;
@@ -78,11 +85,36 @@ export default function ClientPage({ topicTitle, topicId }: ClientPageProps) {
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const scaleChange = e.deltaY * -0.001;
+    const newScale = Math.min(Math.max(0.1, scale + scaleChange), 2);
+    setScale(newScale);
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - offset.x,
+      y: e.clientY - offset.y,
+    });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isDragging) {
+      setOffset({
+        x: e.clientX - dragStart.x,
+        y: e.clientY - dragStart.y,
+      });
+    }
+  };
+
   if (loading || dimensions.width === 0 || dimensions.height === 0) {
     return (
       <main className="flex-1 min-h-screen">
         <div id="graph-container" className="flex-1 h-screen bg-[#2d2d2d] p-4">
-          <div className="flex justify-center items-center h-full">
+          <div className="flex flex-col justify-center items-center h-full">
+            <p className="text-white text-2xl mb-4">Deepseek sucks sorry </p>
             <Loader2 className="animate-spin text-[#FA60D4]" size={70} />
           </div>
         </div>
@@ -92,7 +124,15 @@ export default function ClientPage({ topicTitle, topicId }: ClientPageProps) {
 
   return (
     <main className="flex-1 min-h-screen">
-      <div id="graph-container" className="flex-1 h-screen bg-[#2d2d2d] p-4">
+      <div
+        id="graph-container"
+        className="flex-1 h-screen bg-[#2d2d2d] p-4 cursor-grab active:cursor-grabbing"
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={() => setIsDragging(false)}
+        onMouseLeave={() => setIsDragging(false)}
+        onWheel={handleWheel}
+      >
         <svg
           width="100%"
           height="100%"
@@ -131,41 +171,43 @@ export default function ClientPage({ topicTitle, topicId }: ClientPageProps) {
             rx={10}
           />
 
-          <VisxGraph
-            graph={graphData}
-            top={20}
-            left={20}
-            nodeComponent={({ node }) => (
-              <g>
-                <DefaultNode
-                  fill="#FA60D4"
-                  radius={20}
-                  stroke="#ffffff"
-                  strokeWidth={2}
+          <g transform={`translate(${offset.x}, ${offset.y}) scale(${scale})`}>
+            <VisxGraph
+              graph={graphData}
+              top={20}
+              left={20}
+              nodeComponent={({ node }) => (
+                <g>
+                  <DefaultNode
+                    fill="#FA60D4"
+                    radius={20 / scale}
+                    stroke="#ffffff"
+                    strokeWidth={2 / scale}
+                  />
+                  <text
+                    dx={30 / scale}
+                    dy={5 / scale}
+                    fontSize={12 / scale}
+                    fill="white"
+                    style={{ pointerEvents: "none" }}
+                  >
+                    {node.label}
+                  </text>
+                </g>
+              )}
+              linkComponent={({ link }) => (
+                <line
+                  x1={link.source.x}
+                  y1={link.source.y}
+                  x2={link.target.x}
+                  y2={link.target.y}
+                  strokeWidth={2 / scale}
+                  stroke="#bdc3c7"
+                  strokeOpacity={0.3}
                 />
-                <text
-                  dx={30}
-                  dy={5}
-                  fontSize={12}
-                  fill="white"
-                  style={{ pointerEvents: "none" }}
-                >
-                  {node.label}
-                </text>
-              </g>
-            )}
-            linkComponent={({ link }) => (
-              <line
-                x1={link.source.x}
-                y1={link.source.y}
-                x2={link.target.x}
-                y2={link.target.y}
-                strokeWidth={2}
-                stroke="#bdc3c7"
-                strokeOpacity={0.3}
-              />
-            )}
-          />
+              )}
+            />
+          </g>
         </svg>
       </div>
     </main>

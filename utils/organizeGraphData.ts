@@ -10,6 +10,11 @@ export async function organizeGraphData(
     console.log(data);
     data.topicId = topicId;
 
+    // Helper function for controlled randomness
+    const jitter = (value: number, amount: number = 20) => {
+      return value + (Math.random() - 0.5) * amount;
+    };
+
     // Save to database
     const { error: updateError } = await supabaseClient
       .from("topics")
@@ -23,23 +28,23 @@ export async function organizeGraphData(
     const nodes: GraphNode[] = [];
     const tempLinks: { source: string; target: string }[] = [];
 
-    // Add topic node at top center
+    // Add topic node with slight jitter
     nodes.push({
       id: `topic-${data.topicId}`,
-      x: 400,
-      y: 50, // Moved up
+      x: jitter(400, 10),
+      y: jitter(50, 15),
       label: data.topicName,
     });
 
-    // Arrange units in an ascending line from left to right
+    // Arrange units with randomness
     const unitSpacing = 200;
     const unitStartX = 400 - ((data.units.length - 1) * unitSpacing) / 2;
-    const baseUnitY = 200; // Base Y position
-    const unitSlope = 50; // Amount each unit rises from left to right
+    const baseUnitY = 200;
+    const unitSlope = 50;
 
     data.units.forEach((unit, unitIndex) => {
-      const unitX = unitStartX + unitIndex * unitSpacing;
-      const unitY = baseUnitY + unitIndex * unitSlope; // Each unit is higher than the last
+      const unitX = jitter(unitStartX + unitIndex * unitSpacing);
+      const unitY = jitter(baseUnitY + unitIndex * unitSlope, 40);
 
       nodes.push({
         id: `unit-${unit.unitId}`,
@@ -48,20 +53,19 @@ export async function organizeGraphData(
         label: unit.unitName,
       });
 
-      // Link unit to topic
       tempLinks.push({
         source: `topic-${data.topicId}`,
         target: `unit-${unit.unitId}`,
       });
 
-      // Arrange lessons in a grid below each unit
-      const lessonsPerRow = 2;
+      // Arrange lessons with more randomness
+      const lessonsPerRow = 3;
       const lessonSpacing = 100;
       unit.lessons.forEach((lesson, lessonIndex) => {
         const row = Math.floor(lessonIndex / lessonsPerRow);
         const col = lessonIndex % lessonsPerRow;
-        const lessonX = unitX + (col - 0.5) * lessonSpacing;
-        const lessonY = unitY + 150 + row * lessonSpacing;
+        const lessonX = jitter(unitX + (col - 0.5) * lessonSpacing, 30);
+        const lessonY = jitter(unitY + 150 + row * lessonSpacing, 50);
 
         nodes.push({
           id: `lesson-${lesson.lessonId}`,

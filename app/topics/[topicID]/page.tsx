@@ -1,5 +1,5 @@
 import { supabaseClient } from "@/utils/supabase/client";
-import ClientPage from "./ClientPage";
+import GraphNetwork from "./GraphNetwork";
 
 export default async function TopicPage({
   params,
@@ -16,5 +16,5 @@ export default async function TopicPage({
     return <div>Topic not found</div>;
   }
 
-  return <ClientPage topicTitle={topic.title} topicId={urlParams.topicID} />;
+  return <GraphNetwork topicTitle={topic.title} topicId={urlParams.topicID} />;
 }

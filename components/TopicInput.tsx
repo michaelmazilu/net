@@ -6,8 +6,6 @@ import { useState } from "react";
 import { supabaseClient } from "@/utils/supabase/client";
 import { Loader2 } from "lucide-react";
 import { FiSend } from "react-icons/fi";
-import { Button } from "./ui/button";
-import { generateLearningPath } from "@/utils/api";
 
 type GraphData = {
   nodes: {
@@ -76,7 +74,7 @@ export function TopicInput() {
 
   return (
     <>
-      <div className="text-3xl text-center font-semibold text-[#B061FF] pb-8">
+      <div className="text-3xl text-center font-semibold text-[#FA60D4] pb-8">
         What would you like to learn?
       </div>
       <div className="relative w-full">
@@ -86,9 +84,9 @@ export function TopicInput() {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyPress}
           placeholder="Ask Net!"
-          className="h-14 text-lg bg-[#2A1A29] text-white border-2 border-[#FA60D4] rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 p-3 scrollable pr-12"
+          className="h-14 text-lg bg-[#2a1a29] text-white border-2 border-[#FA60D4] rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-500 p-3 scrollable pr-12"
         />
-        <Button
+        <button
           onClick={handleSubmit}
           disabled={loading}
           className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
@@ -98,7 +96,7 @@ export function TopicInput() {
           ) : (
             <FiSend size={24} />
           )}
-        </Button>
+        </button>
       </div>
     </>
   );

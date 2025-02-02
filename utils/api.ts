@@ -43,10 +43,10 @@ export interface Conversation {
 
 
 Rules:
-- For the lesson, generate a full lesson  be very in-depth and detailed. The user should learn something from the lesson.
+- For the lesson, generate a full lesson be very in-depth and detailed. Provide examples for what you're teaching when appropriate. This is not a summary of the topic, but a full lesson on the topic. DO NOT be general, be specific. DO NOT summarize anything.
 - Conversations will be questions from the user so DO NOT generate them 
-- Generate 1-4 units
-- Each unit should have 1-3 lessons
+- Generate 2-5 units
+- Each unit should have 2-4 lessons
 - Use sequential numbers for all IDs
 - Ensure all content is educational and focused on the topic
 - Keep lesson names concise but descriptive
