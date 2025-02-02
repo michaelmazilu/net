@@ -72,10 +72,10 @@ export const Sidebar: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="w-72 h-screen bg-[#262626] text-white flex flex-col items-start p-4 shadow-md font-poppins">
+      <div className="w-72 h-screen bg-[#1E1E1E]] text-white flex flex-col items-start p-4 shadow-md font-poppins">
         <div className="w-full flex justify-center mb-6">
           <img
-            src="/logonet.png"
+            src="/netlogo1.png"
             alt="Net Lessons Logo"
             className="w-auto h-auto"
           />
@@ -108,7 +108,7 @@ export const Sidebar: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="w-72 h-screen bg-[#262626] text-white flex flex-col items-start p-4 shadow-md font-poppins">
+      <div className="w-72 h-screen bg-[#4A7FBC] text-white flex flex-col items-start p-4 shadow-md font-poppins">
         <div className="w-full flex justify-center mb-6">
           <img
             src="/logonet.png"
@@ -124,10 +124,13 @@ export const Sidebar: React.FC = () => {
   }
 
   return (
-    <div className="w-72 h-screen bg-[#262626] text-white flex flex-col p-4 shadow-md font-poppins">
+    <div
+      className="w-72 h-screen bg-[#1E1E1E] text-white flex flex-col p-4 shadow-md font-poppins"
+      style={{ borderRight: "1px solid rgba(255, 255, 255, 0.1)" }}
+    >
       <div className="w-full flex justify-center mb-6">
         <img
-          src="/logonet.png"
+          src="/netlogo1.png"
           alt="Net Lessons Logo"
           className="w-auto h-auto"
         />
@@ -140,7 +143,7 @@ export const Sidebar: React.FC = () => {
         {topics.map((topic) => (
           <div
             key={topic.id}
-            className="group flex items-center w-full mb-4 hover:bg-[#808080] rounded-md"
+            className="group flex items-center w-full mb-4 hover:bg-[#2E2E2E] rounded-md"
           >
             <Button
               onClick={() => router.push(`/topics/${topic.id}`)}
@@ -150,14 +153,14 @@ export const Sidebar: React.FC = () => {
                 className="overflow-hidden whitespace-nowrap"
                 title={topic.title}
               >
-                {topic.title}
+                (topic.title)
               </div>
             </Button>
 
             <div className="flex-shrink-0 px-2">
               <FaTrash
                 onClick={() => handleDelete(topic.id)}
-                className="text-[#FA60D6] cursor-pointer text-xl opacity-0 group-hover:opacity-100 transition-opacity transform hover:animate-shake"
+                className="text-[#B061FF] cursor-pointer text-xl opacity-0 group-hover:opacity-100 transition-opacity transform hover:animate-shake"
               />
             </div>
           </div>
