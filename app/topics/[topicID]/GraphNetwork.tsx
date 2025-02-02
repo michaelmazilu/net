@@ -30,6 +30,9 @@ export default function GraphNetwork({
   const patternId = "dot-pattern";
   const background = "#262626";
 
+  // Add ref for container
+  const containerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!isFirstRender.current) return;
     isFirstRender.current = false;
@@ -85,11 +88,46 @@ export default function GraphNetwork({
     return () => window.removeEventListener("resize", updateDimensions);
   }, []);
 
+  // Prevent default zoom
+  useEffect(() => {
+    const preventDefault = (e: WheelEvent) => {
+      if (e.ctrlKey) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener("wheel", preventDefault, { passive: false });
+    return () => document.removeEventListener("wheel", preventDefault);
+  }, []);
+
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    const scaleChange = e.deltaY * -0.001;
-    const newScale = Math.min(Math.max(0.1, scale + scaleChange), 2);
+
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
+    const rect = container.getBoundingClientRect();
+
+    // Get mouse position relative to container
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // Calculate position in scaled space
+    const x = (mouseX - offset.x) / scale;
+    const y = (mouseY - offset.y) / scale;
+
+    // Calculate new scale with increased sensitivity
+    const scaleChange = e.deltaY * -0.006;
+    const newScale = Math.min(Math.max(0.1, scale + scaleChange), 4);
+
+    // Calculate new offset to keep mouse position fixed
+    const newOffset = {
+      x: mouseX - x * newScale,
+      y: mouseY - y * newScale,
+    };
+
     setScale(newScale);
+    setOffset(newOffset);
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -125,6 +163,7 @@ export default function GraphNetwork({
   return (
     <main className="flex-1 min-h-screen">
       <div
+        ref={containerRef}
         id="graph-container"
         className="flex-1 h-screen bg-[#2d2d2d] p-4 cursor-grab active:cursor-grabbing"
         onMouseDown={handleMouseDown}
@@ -180,16 +219,16 @@ export default function GraphNetwork({
                 <g>
                   <DefaultNode
                     fill="#FA60D4"
-                    radius={20 / scale}
+                    radius={20}
                     stroke="#ffffff"
-                    strokeWidth={2 / scale}
+                    strokeWidth={2}
                   />
                   <text
-                    dx={30 / scale}
-                    dy={5 / scale}
-                    fontSize={12 / scale}
+                    dx={0}
+                    dy={35}
+                    fontSize={12}
                     fill="white"
-                    style={{ pointerEvents: "none" }}
+                    style={{ pointerEvents: "none", textAnchor: "middle" }}
                   >
                     {node.label}
                   </text>
@@ -201,7 +240,7 @@ export default function GraphNetwork({
                   y1={link.source.y}
                   x2={link.target.x}
                   y2={link.target.y}
-                  strokeWidth={2 / scale}
+                  strokeWidth={2}
                   stroke="#bdc3c7"
                   strokeOpacity={0.3}
                 />

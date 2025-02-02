@@ -65,7 +65,7 @@ export async function organizeGraphData(
         const row = Math.floor(lessonIndex / lessonsPerRow);
         const col = lessonIndex % lessonsPerRow;
         const lessonX = jitter(unitX + (col - 0.5) * lessonSpacing, 30);
-        const lessonY = jitter(unitY + 150 + row * lessonSpacing, 50);
+        const lessonY = jitter(unitY + 150 + row * lessonSpacing * 2, 50);
 
         nodes.push({
           id: `lesson-${lesson.lessonId}`,
