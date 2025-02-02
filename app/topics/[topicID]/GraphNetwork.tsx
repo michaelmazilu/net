@@ -3,9 +3,10 @@ import { Graph as VisxGraph, DefaultNode } from "@visx/network";
 import { generateLearningPath } from "@/utils/api";
 import { useEffect, useState, useRef } from "react";
 import { organizeGraphData } from "@/utils/organizeGraphData";
-import { GraphData } from "@/app/types";
+import { GraphData, LLMResponse } from "@/app/types";
 import { Loader2 } from "lucide-react";
 import { supabaseClient } from "@/utils/supabase/client";
+import { PopUp } from "@/components/PopUp";
 
 interface GraphNetworkProps {
   topicTitle: string;
@@ -24,6 +25,9 @@ export default function GraphNetwork({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [scale, setScale] = useState(1);
   const isFirstRender = useRef(true);
+  const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [llmData, setLlmData] = useState<LLMResponse | null>(null);
 
   const dotSize = 1;
   const spacing = 30;
@@ -47,7 +51,8 @@ export default function GraphNetwork({
           .single();
 
         if (existingTopic?.body) {
-          // Use existing data
+          const llmResponse = existingTopic.body as LLMResponse;
+          setLlmData(llmResponse);
           const organized = await organizeGraphData(
             JSON.stringify(existingTopic.body),
             topicId
@@ -59,6 +64,8 @@ export default function GraphNetwork({
           const cleanJson = data.choices[0].message.content
             .replace(/^```json\s*/, "")
             .replace(/```$/, "");
+          const llmResponse = JSON.parse(cleanJson) as LLMResponse;
+          setLlmData(llmResponse);
           const organized = await organizeGraphData(cleanJson, topicId);
           setGraphData(organized);
         }
@@ -161,7 +168,7 @@ export default function GraphNetwork({
   }
 
   return (
-    <main className="flex-1 min-h-screen">
+    <main className="flex-1 min-h-screen relative">
       <div
         ref={containerRef}
         id="graph-container"
@@ -187,8 +194,8 @@ export default function GraphNetwork({
               patternUnits="userSpaceOnUse"
             >
               <circle
-                cx={spacing / 2}
-                cy={spacing / 2}
+                cx={spacing / 40}
+                cy={spacing / 40}
                 r={dotSize}
                 fill="#404040"
               />
@@ -215,25 +222,57 @@ export default function GraphNetwork({
               graph={graphData}
               top={20}
               left={20}
-              nodeComponent={({ node }) => (
-                <g>
-                  <DefaultNode
-                    fill="#FA60D4"
-                    radius={20}
-                    stroke="#ffffff"
-                    strokeWidth={2}
-                  />
-                  <text
-                    dx={0}
-                    dy={35}
-                    fontSize={12}
-                    fill="white"
-                    style={{ pointerEvents: "none", textAnchor: "middle" }}
+              nodeComponent={({ node }) => {
+                const isLesson = node.id.startsWith("lesson-");
+                const showLabel =
+                  !isLesson || (isLesson && hoveredNode === node.id);
+
+                useEffect(() => {
+                  const circle = document.querySelector(
+                    `[data-node-id="${node.id}"]`
+                  );
+                  if (circle) {
+                    const handleClick = () => {
+                      setSelectedNode(node.id);
+                    };
+
+                    circle.addEventListener("mousedown", handleClick);
+                    return () =>
+                      circle.removeEventListener("mousedown", handleClick);
+                  }
+                }, [node.id]);
+
+                return (
+                  <g
+                    onMouseEnter={() => setHoveredNode(node.id)}
+                    onMouseLeave={() => setHoveredNode(null)}
+                    style={{ cursor: "pointer" }}
+                    data-node-id={node.id}
                   >
-                    {node.label}
-                  </text>
-                </g>
-              )}
+                    <DefaultNode
+                      fill="#FA60D4"
+                      radius={20}
+                      stroke="#ffffff"
+                      strokeWidth={2}
+                    />
+                    {showLabel && (
+                      <text
+                        dx={0}
+                        dy={35}
+                        fontSize={12}
+                        fill="white"
+                        style={{
+                          pointerEvents: "none",
+                          textAnchor: "middle",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {node.label}
+                      </text>
+                    )}
+                  </g>
+                );
+              }}
               linkComponent={({ link }) => (
                 <line
                   x1={link.source.x}
@@ -249,6 +288,14 @@ export default function GraphNetwork({
           </g>
         </svg>
       </div>
+
+      {llmData && (
+        <PopUp
+          llmData={llmData}
+          selectedNode={selectedNode}
+          onClose={() => setSelectedNode(null)}
+        />
+      )}
     </main>
   );
 }
