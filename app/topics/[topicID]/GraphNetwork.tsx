@@ -250,21 +250,21 @@ export default function GraphNetwork({
                     data-node-id={node.id}
                   >
                     <DefaultNode
-                      fill="#FA60D4"
-                      radius={20}
+                      fill="#B061FF"
+                      radius={16}
                       stroke="#ffffff"
-                      strokeWidth={2}
+                      strokeWidth={1}
                     />
                     {showLabel && (
                       <text
                         dx={0}
-                        dy={35}
-                        fontSize={12}
+                        dy={30}
+                        fontSize={10}
                         fill="white"
                         style={{
                           pointerEvents: "none",
                           textAnchor: "middle",
-                          fontWeight: 600,
+                          fontWeight: 800,
                         }}
                       >
                         {node.label}
