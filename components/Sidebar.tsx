@@ -5,6 +5,7 @@ import { Button } from "./ui/button";
 import { supabaseClient } from "@/utils/supabase/client";
 import { Auth } from "./Auth";
 import { User } from "@supabase/supabase-js";
+import { useRouter } from "next/navigation";
 
 import { FaTrash } from "react-icons/fa";
 
@@ -19,6 +20,7 @@ export const Sidebar: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     supabaseClient.auth.getSession().then(({ data: { session } }) => {
@@ -141,8 +143,8 @@ export const Sidebar: React.FC = () => {
             className="group relative flex items-center w-full mb-4"
           >
             <Button
+              onClick={() => router.push(`/topics/${topic.id}`)}
               className="shadow-none flex-grow text-lg font-medium text-left bg-transparent hover:bg-[#808080] hover:text-white py-2 px-4 rounded-md"
-              topicID={topic.id}
             >
               {topic.title}
             </Button>

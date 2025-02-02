@@ -104,15 +104,6 @@ export function TopicInput() {
 
         if (topicError) throw topicError;
 
-        // Generate learning path content
-        const learningPathData = await generateLearningPath(topic.title);
-        const content = learningPathData.choices[0].message.content;
-
-        // Parse graph data (for optional client-side rendering)
-        const graphData = parseLearningPath(content);
-        setGraphContent(graphData); // Store parsed graph content
-
-        // Redirect to the new topic page
         router.push(`/topics/${topic.id}`);
       } catch (error: any) {
         console.error("Error creating topic:", error.message);

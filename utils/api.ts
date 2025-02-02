@@ -6,7 +6,7 @@ export async function generateLearningPath(topic: string) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.DEEPSEEK_API_KEY}`,
+          Authorization: `Bearer sk-7213718d79044d80aac7f7a9343fa7d1`,
         },
         body: JSON.stringify({
           model: "deepseek-chat",
