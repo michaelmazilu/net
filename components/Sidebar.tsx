@@ -140,19 +140,26 @@ export const Sidebar: React.FC = () => {
         {topics.map((topic) => (
           <div
             key={topic.id}
-            className="group relative flex items-center w-full mb-4"
+            className="group flex items-center w-full mb-4 hover:bg-[#808080] rounded-md"
           >
             <Button
               onClick={() => router.push(`/topics/${topic.id}`)}
-              className="shadow-none flex-grow text-lg font-medium text-left bg-transparent hover:bg-[#808080] hover:text-white py-2 px-4 rounded-md"
+              className="shadow-none flex-1 min-w-0 text-lg font-medium text-left bg-transparent hover:bg-transparent hover:text-white py-2 px-4"
             >
-              {topic.title}
+              <div
+                className="overflow-hidden whitespace-nowrap"
+                title={topic.title}
+              >
+                {topic.title}
+              </div>
             </Button>
 
-            <FaTrash
-              onClick={() => handleDelete(topic.id)}
-              className="text-[#FA60D6] ml-2 cursor-pointer text-xl opacity-0 group-hover:opacity-100 transition-opacity transform hover:animate-shake"
-            />
+            <div className="flex-shrink-0 px-2">
+              <FaTrash
+                onClick={() => handleDelete(topic.id)}
+                className="text-[#FA60D6] cursor-pointer text-xl opacity-0 group-hover:opacity-100 transition-opacity transform hover:animate-shake"
+              />
+            </div>
           </div>
         ))}
       </div>
