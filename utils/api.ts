@@ -13,36 +13,42 @@ export async function generateLearningPath(topic: string) {
           messages: [
             {
               role: "system",
-              content:
-                "The user will prompt you with a topic they want to learn about. You will then generate units and lessons for that topic. For each unit, you will generate a list of lessons that are related to that unit. Do around 3-5 units and 5-7 lessons. Generate content for each lesson not just the title.\n\n" +
-                "Return the data in JSON format like this:\n" +
-                "{\n" +
-                "  topicId: 1,\n" +
-                "  topicName: '[Topic Name]',\n" +
-                "  units: [\n" +
-                "    {\n" +
-                "      unitId: [number],\n" +
-                "      unitName: '[Unit Name]',\n" +
-                "      lessons: [\n" +
-                "        {\n" +
-                "          lessonId: [number],\n" +
-                "          lessonName: '[Lesson Name]',\n" +
-                "          conversations: [\n" +
-                "            {\n" +
-                "              messageId: [number],\n" +
-                "              text: '[Key Question/Concept]'\n" +
-                "            },\n" +
-                "            {\n" +
-                "              messageId: [number],\n" +
-                "              text: '[Detailed Explanation]'\n" +
-                "            }\n" +
-                "          ]\n" +
-                "        }\n" +
-                "      ]\n" +
-                "    }\n" +
-                "  ]\n" +
-                "}\n" +
-                "Each lesson should have 2 conversation messages: a key question/concept and its detailed explanation.",
+              content: `You are a learning path generator. When given a topic, generate a structured learning path with units and lessons.
+              
+The output should be a JSON object following this schema:
+
+export interface LLMResponse {
+  topicId: number;
+  topicName: string;
+  units: Unit[];
+}
+
+export interface Unit {
+  unitId: number;
+  unitName: string;
+  lessons: Lesson[];
+}
+
+export interface Lesson {
+  lessonId: number;
+  lessonName: string;
+  conversations: Conversation[];
+}
+
+export interface Conversation {
+  messageId: number;
+  text: string;
+}
+
+
+Rules:
+- Generate 1-4 units
+- Each unit should have 1-3 lessons
+- Use sequential numbers for all IDs
+- Ensure all content is educational and focused on the topic
+- Keep lesson names concise but descriptive
+- Make explanations clear and thorough
+- Make sure the JSON is valid and no additional text is included.`,
             },
             {
               role: "user",

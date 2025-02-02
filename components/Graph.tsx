@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Graph as VisxGraph, DefaultNode } from "@visx/network";
 import { dummyGraphData } from "@/app/data/dummyGraphData";
+import { organizeGraphData } from "@/utils/organizeGraphData";
 
 interface GraphProps {
   content: string;
@@ -13,6 +14,7 @@ export default function Graph({ content }: GraphProps) {
   const spacing = 30;
   const patternId = "dot-pattern";
   const background = "#262626";
+  organizeGraphData(content);
 
   useEffect(() => {
     const updateDimensions = () => {

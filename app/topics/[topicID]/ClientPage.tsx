@@ -15,8 +15,11 @@ export default function ClientPage({ topicTitle }: ClientPageProps) {
     const generateContent = async () => {
       try {
         const data = await generateLearningPath(topicTitle);
-        console.log(data.choices[0].message.content);
-        setContent(data.choices[0].message.content);
+        const cleanJson = data.choices[0].message.content
+          .replace(/^```json\s*/, "") // Remove leading ```json
+          .replace(/```$/, ""); // Remove trailing ```
+        setContent(cleanJson);
+        console.log(cleanJson);
       } catch (error) {
         console.error("Error:", error);
       } finally {
