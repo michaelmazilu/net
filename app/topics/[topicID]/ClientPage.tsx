@@ -4,6 +4,8 @@ import { generateLearningPath } from "@/utils/api";
 import { useEffect, useState, useRef } from "react";
 import { organizeGraphData } from "@/utils/organizeGraphData";
 import { GraphData } from "@/app/types";
+import { Loader2 } from "lucide-react";
+import { supabaseClient } from "@/utils/supabase/client";
 
 interface ClientPageProps {
   topicTitle: string;
@@ -27,13 +29,29 @@ export default function ClientPage({ topicTitle, topicId }: ClientPageProps) {
 
     const generateContent = async () => {
       try {
-        const data = await generateLearningPath(topicTitle);
-        const cleanJson = data.choices[0].message.content
-          .replace(/^```json\s*/, "") // Remove leading ```json
-          .replace(/```$/, ""); // Remove trailing ```
-        const organized = await organizeGraphData(cleanJson, topicId);
-        console.log(organized);
-        // setGraphData(organized);
+        // Check if topic exists with content
+        const { data: existingTopic } = await supabaseClient
+          .from("topics")
+          .select("body")
+          .eq("id", topicId)
+          .single();
+
+        if (existingTopic?.body) {
+          // Use existing data
+          const organized = await organizeGraphData(
+            JSON.stringify(existingTopic.body),
+            topicId
+          );
+          setGraphData(organized);
+        } else {
+          // Generate new data
+          const data = await generateLearningPath(topicTitle);
+          const cleanJson = data.choices[0].message.content
+            .replace(/^```json\s*/, "")
+            .replace(/```$/, "");
+          const organized = await organizeGraphData(cleanJson, topicId);
+          setGraphData(organized);
+        }
       } catch (error) {
         console.error("Error:", error);
       } finally {
@@ -61,7 +79,15 @@ export default function ClientPage({ topicTitle, topicId }: ClientPageProps) {
   }, []);
 
   if (loading || dimensions.width === 0 || dimensions.height === 0) {
-    return <div>Loading...</div>;
+    return (
+      <main className="flex-1 min-h-screen">
+        <div id="graph-container" className="flex-1 h-screen bg-[#2d2d2d] p-4">
+          <div className="flex justify-center items-center h-full">
+            <Loader2 className="animate-spin text-[#FA60D4]" size={70} />
+          </div>
+        </div>
+      </main>
+    );
   }
 
   return (

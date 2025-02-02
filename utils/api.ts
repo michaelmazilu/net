@@ -32,7 +32,8 @@ export interface Unit {
 export interface Lesson {
   lessonId: number;
   lessonName: string;
-  conversations: Conversation[];
+  lesson: string;
+  conversations?: Conversation[];
 }
 
 export interface Conversation {
@@ -42,6 +43,8 @@ export interface Conversation {
 
 
 Rules:
+- For the lesson, generate a full lesson  be very in-depth and detailed. The user should learn something from the lesson.
+- Conversations will be questions from the user so DO NOT generate them 
 - Generate 1-4 units
 - Each unit should have 1-3 lessons
 - Use sequential numbers for all IDs

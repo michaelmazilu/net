@@ -13,7 +13,8 @@ export interface Unit {
 export interface Lesson {
   lessonId: number;
   lessonName: string;
-  conversations: Conversation[];
+  lesson: string;
+  conversations?: Conversation[];
 }
 
 export interface Conversation {
@@ -27,7 +28,7 @@ export interface GraphNode {
   y: number;
   label: string;
 }
-
+//{ source: string; target: string }
 export interface GraphLink {
   source: { x: number; y: number };
   target: { x: number; y: number };
