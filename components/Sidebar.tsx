@@ -132,7 +132,7 @@ export const Sidebar: React.FC = () => {
         <img
           src="/netlogo1.png"
           alt="Net Lessons Logo"
-          className="w-auto h-auto"
+          className="max-w-[100px] h-auto"
         />
       </div>
 

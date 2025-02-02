@@ -153,7 +153,7 @@ export default function GraphNetwork({
         <div id="graph-container" className="flex-1 h-screen bg-[#2d2d2d] p-4">
           <div className="flex flex-col justify-center items-center h-full">
             <p className="text-white text-2xl mb-4">Deepseek sucks sorry </p>
-            <Loader2 className="animate-spin text-[#FA60D4]" size={70} />
+            <Loader2 className="animate-spin text-[#B061FF]" size={70} />
           </div>
         </div>
       </main>
