@@ -29,54 +29,6 @@ export function TopicInput() {
   const [graphContent, setGraphContent] = useState<GraphData | null>(null);
   const userEmail = "vmazilu@uwaterloo.ca";
 
-  const generateLearningPath = async (topic: string) => {
-    return {
-      choices: [{ message: { content: `Generated content for ${topic}` } }],
-    };
-  };
-
-  const parseLearningPath = (content: string): GraphData => {
-    const steps = content.split("\n").filter(Boolean);
-
-    const limitedSteps = steps.slice(0, 8);
-
-    const mainNode = {
-      id: "main-node",
-      x: 400,
-      y: 50,
-      label: "Main Node",
-      style: { stroke: "black", strokeWidth: 2, fill: "#f0f0f0" },
-    };
-
-    const primaryNodes = limitedSteps.slice(0, 3).map((step, index) => ({
-      id: `primary-node-${index}`,
-      x: 200 * (index + 1),
-      y: 150 + index * 150,
-      label: step,
-      style: { stroke: "black", strokeWidth: 2, fill: "#ffffff" },
-    }));
-
-    const secondaryNodes = limitedSteps.slice(3).map((step, index) => ({
-      id: `secondary-node-${index}`,
-      x: 200 + Math.random() * 400,
-      y: 250 + Math.random() * 200,
-      label: step,
-      style: { stroke: "black", strokeWidth: 2, fill: "#ffffff" },
-    }));
-
-    const nodes = [mainNode, ...primaryNodes, ...secondaryNodes];
-
-    const links = [
-      ...primaryNodes.map((node) => ({ source: mainNode, target: node })),
-      ...primaryNodes.map((node, index) => ({
-        source: node,
-        target: secondaryNodes[index],
-      })),
-    ];
-
-    return { nodes, links };
-  };
-
   const handleSubmit = async () => {
     if (inputValue.trim()) {
       setLoading(true); // Start loader

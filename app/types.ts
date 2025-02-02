@@ -1,5 +1,5 @@
 export interface LLMResponse {
-  topicId: number;
+  topicId: string;
   topicName: string;
   units: Unit[];
 }

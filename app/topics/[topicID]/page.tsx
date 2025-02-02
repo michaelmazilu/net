@@ -12,10 +12,9 @@ export default async function TopicPage({
     .select("title")
     .eq("id", urlParams.topicID)
     .single();
-
   if (!topic) {
     return <div>Topic not found</div>;
   }
 
-  return <ClientPage topicTitle={topic.title} />;
+  return <ClientPage topicTitle={topic.title} topicId={urlParams.topicID} />;
 }
