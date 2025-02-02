@@ -6,6 +6,7 @@ export async function organizeGraphData(
   topicId: string
 ): Promise<GraphData | undefined> {
   try {
+    console.log("content: ", content);
     const data: LLMResponse = JSON.parse(content);
     console.log(data);
     data.topicId = topicId;

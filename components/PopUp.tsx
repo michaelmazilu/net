@@ -36,34 +36,36 @@ export function PopUp({ llmData, selectedNode, onClose }: PopUpProps) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50 animate-in fade-in duration-300">
-      <Card
-        className="bg-[#1E1E1E] text-white border-[#B061FF] relative overflow-y-auto max-w-[70vw] 
-          animate-in slide-in-from-bottom-10 duration-500"
-      >
+      <div className="relative">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onClose();
           }}
-          className="absolute top-6 right-6 text-gray-400 hover:text-white transition-colors"
+          className="absolute top-0 -right-10 text-[#B061FF] hover:text-white transition-colors z-50 bg-[#1E1E1E] rounded-full p-[2px]"
         >
-          <X size={24} />
+          <X size={32} />
         </button>
-        <CardHeader className="p-8">
-          <CardTitle className="text-3xl mb-6">{lesson.lessonName}</CardTitle>
-        </CardHeader>
-        <CardContent className="px-8 text-gray-400 text-lg whitespace-pre-wrap leading-relaxed">
-          {lesson.lesson}
-        </CardContent>
-        <CardFooter className="p-8 pt-0">
-          <Textarea
-            value={inputValue}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder="Ask about this lesson..."
-            className="h-14 text-lg bg-[#2a1a29] text-white border-2 border-[#B061FF] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B061FF] p-3 scrollable pr-12"
-          />
-        </CardFooter>
-      </Card>
+        <Card
+          className="bg-[#1E1E1E] text-white border-[#B061FF] relative overflow-y-auto w-[70vw] max-h-[80vh]
+            animate-in slide-in-from-bottom-10 duration-500"
+        >
+          <CardHeader className="p-8">
+            <CardTitle className="text-3xl mb-6">{lesson.lessonName}</CardTitle>
+          </CardHeader>
+          <CardContent className="px-8 text-gray-400 text-lg whitespace-pre-wrap leading-relaxed">
+            {lesson.lesson}
+          </CardContent>
+          <CardFooter className="p-8 pt-0">
+            <Textarea
+              value={inputValue}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Ask about this lesson..."
+              className="h-14 text-lg bg-[#2a1a29] text-white border-2 border-[#B061FF] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#B061FF] p-3 scrollable pr-12"
+            />
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 }

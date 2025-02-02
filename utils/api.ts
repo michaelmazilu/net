@@ -1,5 +1,6 @@
 export async function generateLearningPath(topic: string) {
   try {
+    console.log("topic: ", topic);
     const response = await fetch(
       "https://api.deepseek.com/v1/chat/completions",
       {

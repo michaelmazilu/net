@@ -159,7 +159,9 @@ export default function GraphNetwork({
       <main className="flex-1 min-h-screen">
         <div id="graph-container" className="flex-1 h-screen bg-[#2d2d2d] p-4">
           <div className="flex flex-col justify-center items-center h-full">
-            <p className="text-white text-2xl mb-4">Deepseek sucks sorry </p>
+            <p className="text-white text-2xl mb-4">
+              Deepseek latency is too high, please wait{" "}
+            </p>
             <Loader2 className="animate-spin text-[#B061FF]" size={70} />
           </div>
         </div>
