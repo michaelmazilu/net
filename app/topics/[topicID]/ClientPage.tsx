@@ -1,5 +1,5 @@
 "use client";
-import ClientGraph from "@/components/ClientGraph";
+import Graph from "@/components/Graph";
 import { generateLearningPath } from "@/utils/api";
 import { useEffect, useState } from "react";
 
@@ -34,7 +34,7 @@ export default function ClientPage({ topicTitle }: ClientPageProps) {
   return (
     <main className="flex-1 min-h-screen">
       <div className="flex-1 h-screen bg-[#2d2d2d] p-4">
-        <ClientGraph content={content} />
+        <Graph content={content} />
       </div>
     </main>
   );
